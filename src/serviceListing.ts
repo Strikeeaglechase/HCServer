@@ -31,13 +31,13 @@ export default function (): ServiceDefinition[] {
 		},
 		{
 			name: "Workshop",
-			path: "../../workshopService/dist/index.js",
+			path: "../../HCServices/workshopService/dist/index.js",
 			envs: [...connectorEnv, `API_PORT=${secrets.ports.workshop}`, `STEAM_USER=${secrets.steam.username}`, `STEAM_PASS=${secrets.steam.password}`],
 			gateway: { url: "/api/workshop", port: secrets.ports.workshop }
 		},
 		{
 			name: "Database",
-			path: "../../databaseService/dist/index.js",
+			path: "../../HCServices/databaseService/dist/index.js",
 			envs: [...connectorEnv, `DB_NAME=${dbName}`, `DB_URL=${secrets.dbUrl}`]
 		},
 		{
@@ -57,24 +57,24 @@ export default function (): ServiceDefinition[] {
 		},
 		{
 			name: "Replay",
-			path: "../../replayService/dist/index.js",
+			path: "../../HCServices/replayService/dist/index.js",
 			envs: [...connectorEnv, ...awsEnv, `API_PORT=${secrets.ports.replay}`],
 			gateway: { url: "/api/replay", port: secrets.ports.replay }
 		},
 		{
 			name: "VTGR",
-			path: "../../vtgrService/dist/index.js",
+			path: "../../HCServices/vtgrService/dist/index.js",
 			envs: [...connectorEnv]
 		},
 		{
 			name: "Storage",
-			path: "../../storageService/dist/index.js",
+			path: "../../HCServices/storageService/dist/index.js",
 			envs: [...connectorEnv, ...awsEnv, `API_PORT=${secrets.ports.storage}`, `DATA_PATH=../store/`],
 			gateway: { url: "/api/storage", port: secrets.ports.storage }
 		},
 		{
 			name: "LandingRater",
-			path: "../../carrierLandingRater/dist/index.js",
+			path: "../../HCServices/carrierLandingRater/dist/index.js",
 			envs: [...connectorEnv, `API_PORT=${secrets.ports.landingRater}`],
 			gateway: { url: "/api/lrs", port: secrets.ports.landingRater }
 		}
