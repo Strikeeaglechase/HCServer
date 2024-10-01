@@ -1,0 +1,764 @@
+[
+	{
+		"id": "ah94_mp1",
+		"name": "Urban Liberation",
+		"campaignId": "ah94-mpMissions",
+		"workshopId": "built-in",
+		"mapId": "fujiD",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 2,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 13,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 14,
+				"name": "MultiplayerSpawn"
+			}
+		]
+	},
+	{
+		"id": "ah94_mp2_coast",
+		"name": "Midnight Assassin",
+		"campaignId": "ah94-mpMissions",
+		"workshopId": "built-in",
+		"mapId": "piCoast_40x4000",
+		"spawns": [
+			{
+				"id": 2,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 3,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 4,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 5,
+				"name": "MultiplayerSpawn"
+			}
+		]
+	},
+	{
+		"id": "ah94_4v4pvp",
+		"name": "AH-94 Deathmatch 4v4",
+		"campaignId": "ah94-quickFlight_mp",
+		"workshopId": "built-in",
+		"mapId": "42c_deathmatchMap",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 2,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 4,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 7,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 13,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 15,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 17,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 19,
+				"name": "MultiplayerSpawnEnemy"
+			}
+		]
+	},
+	{
+		"id": "ah94_mpFreeFlight",
+		"name": "AH-94 Free Flight",
+		"campaignId": "ah94-quickFlight_mp",
+		"workshopId": "built-in",
+		"mapId": "piCoast_40x4000",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 1,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 2,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 3,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 4,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 5,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 6,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 7,
+				"name": "MultiplayerSpawnEnemy"
+			}
+		]
+	},
+	{
+		"id": "arcticAssault",
+		"name": "Arctic Assault",
+		"campaignId": "ah94-quickFlight_mp",
+		"workshopId": "built-in",
+		"mapId": "caRiverActic",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 96,
+				"name": "MultiplayerSpawn"
+			}
+		]
+	},
+	{
+		"id": "flightPractice",
+		"name": "Flight Practice",
+		"campaignId": "ah94-quickFlight_mp",
+		"workshopId": "built-in",
+		"mapId": "42c_deathmatchMap",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			}
+		]
+	},
+	{
+		"id": "smallArms",
+		"name": "Small Arms",
+		"campaignId": "ah94-quickFlight_mp",
+		"workshopId": "built-in",
+		"mapId": "rockies2",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 68,
+				"name": "MultiplayerSpawn"
+			}
+		]
+	},
+	{
+		"id": "surpriseAttack",
+		"name": "Surprise Attack",
+		"campaignId": "ah94-quickFlight_mp",
+		"workshopId": "built-in",
+		"mapId": "afMtnsHills",
+		"spawns": [
+			{
+				"id": 1,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 32,
+				"name": "MultiplayerSpawn"
+			}
+		]
+	},
+	{
+		"id": "Target Practice",
+		"name": "Target Practice",
+		"campaignId": "ah94-quickFlight_mp",
+		"workshopId": "built-in",
+		"mapId": "smallHm",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			}
+		]
+	},
+	{
+		"id": "ahtest2",
+		"name": "AH Test 2",
+		"campaignId": "ahtest",
+		"workshopId": "built-in",
+		"mapId": "starwarsCanyon",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawnEnemy"
+			}
+		]
+	},
+	{
+		"id": "ahtest3",
+		"name": "AHTest3dm",
+		"campaignId": "ahtest",
+		"workshopId": "built-in",
+		"mapId": "42c_deathmatchMap",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 1,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 2,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 3,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 4,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 5,
+				"name": "MultiplayerSpawnEnemy"
+			}
+		]
+	},
+	{
+		"id": "ahtest4",
+		"name": "ahtest4",
+		"campaignId": "ahtest",
+		"workshopId": "built-in",
+		"mapId": "tinyTestMap",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 1,
+				"name": "MultiplayerSpawn"
+			}
+		]
+	},
+	{
+		"id": "test1",
+		"name": "AH Test 1",
+		"campaignId": "ahtest",
+		"workshopId": "built-in",
+		"mapId": "tinyTestMap",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 1,
+				"name": "MultiplayerSpawn"
+			}
+		]
+	},
+	{
+		"id": "26b_bvrTest",
+		"name": "A2A BVR Combat",
+		"campaignId": "mp_PVPScenarios",
+		"workshopId": "built-in",
+		"mapId": "hMap2",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 1,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 2,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 3,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 8,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 9,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 4,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 5,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 6,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 7,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 10,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 11,
+				"name": "MultiplayerSpawnEnemy"
+			}
+		]
+	},
+	{
+		"id": "26b_dogfightGunsMissiles",
+		"name": "Dogfight Guns''n''Heaters",
+		"campaignId": "mp_PVPScenarios",
+		"workshopId": "built-in",
+		"mapId": "bigIslands_98x3_b",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 10,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 9,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 8,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 14,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 15,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 4,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 13,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 12,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 11,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 16,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 17,
+				"name": "MultiplayerSpawnEnemy"
+			}
+		]
+	},
+	{
+		"id": "42c_deathmatch",
+		"name": "AV-42C Deathmatch",
+		"campaignId": "mp_PVPScenarios",
+		"workshopId": "built-in",
+		"mapId": "42c_deathmatchMap",
+		"spawns": [
+			{
+				"id": 8,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 9,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 10,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 11,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 12,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 13,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 26,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 27,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 28,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 29,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 30,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 31,
+				"name": "MultiplayerSpawnEnemy"
+			}
+		]
+	},
+	{
+		"id": "Capture the Flag",
+		"name": "Capture the Flag",
+		"campaignId": "mp_PVPScenarios",
+		"workshopId": "built-in",
+		"mapId": "afMtnsHills",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 1,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 2,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 3,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 4,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 5,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 7,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 8,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 9,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 10,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 11,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 12,
+				"name": "MultiplayerSpawnEnemy"
+			}
+		]
+	},
+	{
+		"id": "mp_26bDogfightGuns",
+		"name": "F/A-26B Dogfight (Guns Only)",
+		"campaignId": "mp_PVPScenarios",
+		"workshopId": "built-in",
+		"mapId": "bigIslands_98x3_b",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 1,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 2,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 3,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 8,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 9,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 4,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 5,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 6,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 7,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 10,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 11,
+				"name": "MultiplayerSpawnEnemy"
+			}
+		]
+	},
+	{
+		"id": "mp_baseAttack",
+		"name": "PVP Strike Mission",
+		"campaignId": "mp_PVPScenarios",
+		"workshopId": "built-in",
+		"mapId": "interlaken2",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 1,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 2,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 3,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 68,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 69,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 4,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 5,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 6,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 7,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 70,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 71,
+				"name": "MultiplayerSpawnEnemy"
+			}
+		]
+	},
+	{
+		"id": "45_pveStrike",
+		"name": "F-45 Cooperative Mission",
+		"campaignId": "quickMPFlights",
+		"workshopId": "built-in",
+		"mapId": "as_desertMtnsMP",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 1,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 2,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 3,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 4,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 5,
+				"name": "MultiplayerSpawn"
+			}
+		]
+	},
+	{
+		"id": "airshowFreeflight",
+		"name": "Free Flight / Airshow",
+		"campaignId": "quickMPFlights",
+		"workshopId": "built-in",
+		"mapId": "e_coastBay",
+		"spawns": [
+			{
+				"id": 0,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 1,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 2,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 3,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 4,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 5,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 18,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 6,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 7,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 8,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 9,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 10,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 11,
+				"name": "MultiplayerSpawnEnemy"
+			},
+			{
+				"id": 19,
+				"name": "MultiplayerSpawnEnemy"
+			}
+		]
+	},
+	{
+		"id": "mp_navalMission",
+		"name": "F/A-26B Naval Strike Mission",
+		"campaignId": "quickMPFlights",
+		"workshopId": "built-in",
+		"mapId": "sagaComp",
+		"spawns": [
+			{
+				"id": 3,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 4,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 5,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 6,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 7,
+				"name": "MultiplayerSpawn"
+			},
+			{
+				"id": 8,
+				"name": "MultiplayerSpawn"
+			}
+		]
+	}
+]
