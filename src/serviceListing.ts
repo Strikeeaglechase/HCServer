@@ -42,7 +42,7 @@ export default function (): ServiceDefinition[] {
 		},
 		{
 			name: "Auth",
-			path: "../../authService/dist/index.js",
+			path: "../../HCServices/authService/dist/index.js",
 			envs: [
 				...connectorEnv,
 				`API_PORT=${secrets.ports.auth}`,
