@@ -44,6 +44,7 @@ interface VTOLUser {
 }
 
 interface RawLobbyData {
+	lobbyId: string;
 	lobbyName: string;
 	ownerName: string;
 	ownerId: string;
@@ -288,6 +289,7 @@ class Application {
 
 	@RPC("in")
 	RawLobbySync(
+		lobbyId: string,
 		lobbyName: string,
 		ownerName: string,
 		ownerId: string,
@@ -304,6 +306,7 @@ class Application {
 		playerCount: number
 	) {
 		const data: RawLobbyData = {
+			lobbyId,
 			lobbyName,
 			ownerName,
 			ownerId,
