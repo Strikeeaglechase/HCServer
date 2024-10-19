@@ -37,6 +37,7 @@ async function start() {
 	await gateway.init(serviceManager.serviceDefs);
 
 	const application = new Application(gateway.httpServer);
+	Application.instance = application;
 
 	process.on("unhandledRejection", (error: Error) => {
 		Logger.error(`Top level unhandled rejection!`);
