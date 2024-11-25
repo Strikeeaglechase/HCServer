@@ -2,6 +2,7 @@ import { compressRpcPackets } from "common/compression/vtcompression.js";
 import { Logger } from "common/logger.js";
 import { EnableRPCs, RPC, RPCPacket } from "common/rpc.js";
 import { Player, RawPlayerInfo } from "common/shared.js";
+import fetch from "node-fetch";
 
 import { Application } from "./app.js";
 import { Client } from "./client.js";
@@ -46,10 +47,14 @@ class VTOLLobby {
 	public maxPlayers: number;
 	public isConnected: boolean;
 	public isPrivate: boolean;
+	public hostId: string;
 	public players: Player[] = [];
 
 	public isHs = false;
 	private lastHealthCheckTime = Date.now();
+
+	private isHcAutoJoinable = false;
+	private hasCheckedValidAutoJoinHost = false;
 
 	private missionId: string;
 	private campaignId: string;
@@ -77,7 +82,8 @@ class VTOLLobby {
 		isConnected: boolean,
 		players: RawPlayerInfo[],
 		hostId: string,
-		hostName: string
+		hostName: string,
+		isHcJoinable: boolean
 	) {
 		this.name = name;
 		this.missionName = missionName;
@@ -86,6 +92,8 @@ class VTOLLobby {
 		this.players = players.map(p => new Player(p));
 		this.isConnected = isConnected;
 		this.isPrivate = isPrivate;
+		this.isHcAutoJoinable = isHcJoinable;
+		this.hostId = hostId;
 
 		// Logger.info(`Lobby data update for ${this.id}: ${this.name} (${this.missionName}) ${this.playerCount}/${this.maxPlayers} ${this.isPrivate ? "private" : "public"} ${this.isConnected ? "connected" : "1`ed"}`);
 
@@ -99,10 +107,31 @@ class VTOLLobby {
 			if (process.env.IS_DEV != "true") this.continuousRecord = true;
 		}
 
+		if (this.isHcAutoJoinable && !this.hasCheckedValidAutoJoinHost) {
+			this.checkAutoJoinHost();
+		}
+
 		if (this.workshopId == "3104789609") {
 			this.continuousRecord = true;
 			this.continuousRecordPassword = "1776";
 			// Logger.warn(`Lobby ${this} is a continuous record lobby due to workshop ID`);
+		}
+	}
+
+	private async checkAutoJoinHost() {
+		this.hasCheckedValidAutoJoinHost = true;
+		const req = await fetch(`http://book.caw8.net/user/${this.hostId}`);
+		if (req.status != 200) {
+			Logger.warn(`Failed to check auto join host for ${this.name} (${this.id}), status: ${req.status}`);
+			return;
+		}
+
+		const data = (await req.json()) as { user: { discordId: string; steamId: string }; isAuthed: boolean };
+		if (data.isAuthed) {
+			this.continuousRecord = true;
+			Logger.info(`Lobby ${this} is a continuous record lobby due to auto join host`);
+		} else {
+			Logger.info(`Lobby ${this} is hosted by non-authenticated user ${this.hostId}`);
 		}
 	}
 
