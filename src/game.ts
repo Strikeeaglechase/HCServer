@@ -24,9 +24,32 @@ interface ResyncPacketFilter {
 const resyncPacketFilter: ResyncPacketFilter[] = [
 	{ className: ["MessageHandler"], method: ["NetInstantiate", "NetDestroy", "SetEntityUnitID", "CreateJammer"] },
 	{ className: ["RadarJammerSync"], method: ["TDecoyModel", "TMode"] },
-	{ className: ["PlayerVehicle", "AIAirVehicle", "AIGroundUnit"], method: ["Die", "Spawn"] },
+	{ className: ["PlayerVehicle", "AIAirVehicle", "AIGroundUnit"], method: ["Die", "Spawn", "AttachEquip"] },
 	{ className: ["VTOLLobby"], method: ["LogMessage"] }
 ];
+
+// On NetDestroy, we remove any resync packets that are no longer needed
+function checkResyncShouldBeRemovedForDestroy(packet: RPCPacket, destroyId: string) {
+	switch (packet.className) {
+		case "MessageHandler":
+			if (packet.method == "NetInstantiate" && packet.args[0] == destroyId) return true;
+			if (packet.method == "SetEntityUnitID" && packet.args[0] == destroyId) return true;
+			break;
+
+		case "RadarJammerSync":
+		case "PlayerVehicle":
+		case "AIAirVehicle":
+		case "AIGroundUnit":
+			if (packet.id == destroyId) return true;
+			break;
+
+		default:
+			break;
+	}
+
+	return false;
+}
+
 // const LOBBY_INACTIVITY_TIMEOUT = 1000 * 60; // 1 minute
 const LOBBY_INACTIVITY_TIMEOUT = 1000 * 5; // 5 seconds
 
@@ -61,7 +84,7 @@ class VTOLLobby {
 	private workshopId: string;
 
 	private disconnectTimeStart: number = 0;
-	private continuousRecord = false;
+	public continuousRecord = false;
 	private continuousRecordPassword: string = undefined;
 	private contRecordJoinStartedAt = 0;
 
@@ -105,13 +128,14 @@ class VTOLLobby {
 		if (this.name.includes("24/7 BVR") && this.playerCount > 1) {
 			this.isHs = true;
 			if (process.env.IS_DEV != "true") this.continuousRecord = true;
+			// this.continuousRecord = true;
 		}
 
-		if (this.isHcAutoJoinable && !this.hasCheckedValidAutoJoinHost) {
+		if (this.isHcAutoJoinable && !this.hasCheckedValidAutoJoinHost && process.env.IS_DEV != "true") {
 			this.checkAutoJoinHost();
 		}
 
-		if (this.workshopId == "3104789609") {
+		if (this.workshopId == "3104789609" && process.env.IS_DEV != "true") {
 			this.continuousRecord = true;
 			this.continuousRecordPassword = "1776";
 			// Logger.warn(`Lobby ${this} is a continuous record lobby due to workshop ID`);
@@ -176,7 +200,7 @@ class VTOLLobby {
 
 	@RPC("in")
 	ConnectionResult(result: boolean, reason: string) {
-		console.log(`Connection result for ${this.name} (${this.id}): ${result ? "Success" : "Failure"}: ${reason}`);
+		Logger.info(`Connection result for ${this.name} (${this.id}): ${result ? "Success" : "Failure"}: ${reason}`);
 		if (this.continuousRecord && !result) {
 			this.contRecordJoinStartedAt = 0;
 		}
@@ -267,7 +291,15 @@ class VTOLLobby {
 		const isResyncPacket = resyncPacketFilter.some(
 			filter => compareStrOrArr(packet.className, filter.className) && compareStrOrArr(packet.method, filter.method)
 		);
-		if (isResyncPacket) this.resyncPackets.push(packet);
+		if (isResyncPacket) {
+			if (packet.className == "MessageHandler" && packet.method == "NetDestroy") {
+				// const initLength = this.resyncPackets.length;
+				this.resyncPackets = this.resyncPackets.filter(p => !checkResyncShouldBeRemovedForDestroy(p, packet.args[0]));
+				// Logger.info(`Removed ${initLength - this.resyncPackets.length} resync packets for destroy ${packet.args[0]}`);
+			} else {
+				this.resyncPackets.push(packet);
+			}
+		}
 	}
 
 	public disconnect() {
