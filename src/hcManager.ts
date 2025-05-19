@@ -6,7 +6,7 @@ import path from "path";
 import { Application } from "./app";
 
 export namespace HCCommands {
-	export type Packet = JoinLobby | JoinPasswordLobby | LeaveLobby | ConfigureAIP | AIPData;
+	export type Packet = JoinLobby | JoinPasswordLobby | LeaveLobby | ConfigureAIP | AIPData | LobbyReplayId;
 
 	export const joinLobby = (lobbyId: string): JoinLobby => ({ type: "JoinLobby", lobbyId });
 	export interface JoinLobby {
@@ -25,6 +25,13 @@ export namespace HCCommands {
 	export interface LeaveLobby {
 		type: "LeaveLobby";
 		lobbyId: string;
+	}
+
+	export const lobbyReplayId = (lobbyId: string, replayId: string): LobbyReplayId => ({ type: "LobbyReplayId", lobbyId, replayId });
+	export interface LobbyReplayId {
+		type: "LobbyReplayId";
+		lobbyId: string;
+		replayId: string;
 	}
 
 	export interface LobbySlotInfo {}
@@ -144,6 +151,16 @@ class HCManager {
 		}
 		Logger.info(`HCManager: Requesting leave lobby ${lobbyId}`);
 		this.app.headlessClients.forEach(hc => hc.send(HCCommands.leaveLobby(lobbyId)));
+	}
+
+	public setLobbyReplayId(lobbyId: string, replayId: string) {
+		if (this.app.headlessClients.length == 0) {
+			Logger.error("No clients connected to HC when setLobbyReplayId");
+			return;
+		}
+
+		Logger.info(`HCManager: Setting lobby replay ID ${lobbyId} to ${replayId}`);
+		this.app.headlessClients.forEach(hc => hc.send(HCCommands.lobbyReplayId(lobbyId, replayId)));
 	}
 }
 

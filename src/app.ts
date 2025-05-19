@@ -413,6 +413,18 @@ class Application {
 	}
 
 	@Callable
+	public assignLobbyReplayId(lobbyId: string, recordingId: string) {
+		const game = this.getGame(lobbyId);
+		if (!game) {
+			console.error(`Game ${lobbyId} not found for replay ID assignment`);
+			return;
+		}
+
+		// game.currentReplayId = recordingId;
+		game.setReplayId(recordingId);
+	}
+
+	@Callable
 	public headlessClientDisconnected() {}
 }
 

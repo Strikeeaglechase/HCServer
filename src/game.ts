@@ -91,6 +91,8 @@ class VTOLLobby {
 	private pooledRpcs: RPCPacket[] = [];
 	private pooledVTLobbyPackets: RPCPacket[] = [];
 
+	private currentReplayId: string;
+
 	constructor(id: string, private app: Application) {
 		this.id = id;
 	}
@@ -300,6 +302,13 @@ class VTOLLobby {
 				this.resyncPackets.push(packet);
 			}
 		}
+	}
+
+	public setReplayId(id: string) {
+		this.currentReplayId = id;
+		console.log(`Got replay ID for ${this}: ${id}`);
+
+		this.app.hcManager.setLobbyReplayId(this.id, this.currentReplayId);
 	}
 
 	public disconnect() {
