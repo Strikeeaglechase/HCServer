@@ -1,8 +1,68 @@
 import { ChildProcess, spawn } from "child_process";
 import { Logger } from "common/logger.js";
+import { Vector3 } from "common/shared.js";
 import path from "path";
 
 import { Application } from "./app";
+
+export namespace HCCommands {
+	export type Packet = JoinLobby | JoinPasswordLobby | LeaveLobby | ConfigureAIP | AIPData | LobbyReplayId;
+
+	export const joinLobby = (lobbyId: string): JoinLobby => ({ type: "JoinLobby", lobbyId });
+	export interface JoinLobby {
+		type: "JoinLobby";
+		lobbyId: string;
+	}
+
+	export const joinPasswordLobby = (lobbyId: string, password: string): JoinPasswordLobby => ({ type: "JoinPasswordLobby", lobbyId, password });
+	export interface JoinPasswordLobby {
+		type: "JoinPasswordLobby";
+		lobbyId: string;
+		password: string;
+	}
+
+	export const leaveLobby = (lobbyId: string): LeaveLobby => ({ type: "LeaveLobby", lobbyId });
+	export interface LeaveLobby {
+		type: "LeaveLobby";
+		lobbyId: string;
+	}
+
+	export const lobbyReplayId = (lobbyId: string, replayId: string): LobbyReplayId => ({ type: "LobbyReplayId", lobbyId, replayId });
+	export interface LobbyReplayId {
+		type: "LobbyReplayId";
+		lobbyId: string;
+		replayId: string;
+	}
+
+	export interface LobbySlotInfo {}
+
+	export interface ConfigureAIP {
+		type: "ConfigureAIP";
+		lobbyId: string;
+	}
+
+	interface KinematicData {
+		position: Vector3;
+		velocity: Vector3;
+		acceleration: Vector3;
+		rotation: Vector3;
+	}
+
+	export interface AIPData extends KinematicData {
+		type: "AIPData";
+		pyr: Vector3;
+		throttle: number;
+		lobbyId: string;
+	}
+
+	// export interface
+
+	export interface SpawnAIPWeapon {
+		type: "SpawnAIPWeapon";
+		path: string;
+		hpIndex: number;
+	}
+}
 
 class HCManager {
 	private hcPath: string;
@@ -77,10 +137,10 @@ class HCManager {
 
 		if (password) {
 			Logger.info(`HCManager: Requesting join lobby ${lobbyId} with password ${password}`);
-			this.app.headlessClients.forEach(hc => hc.send(`joinpass_${lobbyId}_${password}`));
+			this.app.headlessClients.forEach(hc => hc.send(HCCommands.joinPasswordLobby(lobbyId, password)));
 		} else {
 			Logger.info(`HCManager: Requesting join lobby ${lobbyId}`);
-			this.app.headlessClients.forEach(hc => hc.send(`join_${lobbyId}`));
+			this.app.headlessClients.forEach(hc => hc.send(HCCommands.joinLobby(lobbyId)));
 		}
 	}
 
@@ -90,7 +150,17 @@ class HCManager {
 			return;
 		}
 		Logger.info(`HCManager: Requesting leave lobby ${lobbyId}`);
-		this.app.headlessClients.forEach(hc => hc.send(`leave_${lobbyId}`));
+		this.app.headlessClients.forEach(hc => hc.send(HCCommands.leaveLobby(lobbyId)));
+	}
+
+	public setLobbyReplayId(lobbyId: string, replayId: string) {
+		if (this.app.headlessClients.length == 0) {
+			Logger.error("No clients connected to HC when setLobbyReplayId");
+			return;
+		}
+
+		Logger.info(`HCManager: Setting lobby replay ID ${lobbyId} to ${replayId}`);
+		this.app.headlessClients.forEach(hc => hc.send(HCCommands.lobbyReplayId(lobbyId, replayId)));
 	}
 }
 

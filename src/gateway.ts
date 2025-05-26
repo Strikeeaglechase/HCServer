@@ -7,6 +7,7 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import https from "https";
 import path from "path";
 
+import { Application } from "./app.js";
 import { useHttpServer } from "./serviceListing.js";
 import { ServiceDefinition } from "./serviceManager.js";
 
@@ -31,6 +32,11 @@ class Gateway {
 		});
 
 		this.api.use(express.static("../../VTOLLiveViewerClient/public/"));
+
+		this.api.get("/api/core/lobbies", (req, res) => {
+			// const app = Application
+			res.send(Application.instance.rawLobbyData);
+		});
 
 		this.api.get("/*", (req, res) => {
 			res.sendFile(path.resolve("../../VTOLLiveViewerClient/public/index.html"));

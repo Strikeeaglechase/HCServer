@@ -43,21 +43,55 @@ interface VTOLUser {
 	missionName: string;
 }
 
+interface RawLobbyData {
+	lobbyId: string;
+	lobbyName: string;
+	ownerName: string;
+	ownerId: string;
+	scenarioName: string;
+	scenarioId: string;
+	maxPlayers: string;
+	feature: string;
+	envIdx: string;
+	gameVersion: string;
+	briefingRoom: string;
+	hasPwd: boolean;
+	ld_GameState: string;
+	mUtc: string;
+	playerCount: number;
+}
+
+interface RawLobbyDataCollection {
+	private: RawLobbyData[];
+	public: RawLobbyData[];
+	updatedAt: number;
+	lastUpdatedList: "private" | "public";
+}
+
 @EnableRPCs("singleInstance")
 class Application {
+	public static instance: Application;
 	wss: WebSocketServer;
 	clients: Client[] = [];
 	headlessClients: Client[] = [];
 	games: VTOLLobby[] = [];
 
 	public hcManager: HCManager;
-
 	private connector: ServiceConnector;
 
 	createLobbyRPCs: RPCPacket[] = [];
 	pooledRpcs: RPCPacket[] = [];
 
 	public vtolUsersList: VTOLUser[] = [];
+
+	public rawLobbyData: RawLobbyDataCollection = {
+		private: [],
+		public: [],
+		updatedAt: 0,
+		lastUpdatedList: "private"
+	};
+
+	private queuedLobbyData: RawLobbyData[] = [];
 
 	// public api: express.Express;
 
@@ -253,6 +287,53 @@ class Application {
 		this.hcManager.requestJoinLobby(id, password);
 	}
 
+	@RPC("in")
+	RawLobbySync(
+		lobbyId: string,
+		lobbyName: string,
+		ownerName: string,
+		ownerId: string,
+		scenarioName: string,
+		scenarioId: string,
+		maxPlayers: string,
+		feature: string,
+		envIdx: string,
+		gameVersion: string,
+		briefingRoom: string,
+		hasPwd: boolean,
+		ld_GameState: string,
+		mUtc: string,
+		playerCount: number
+	) {
+		const data: RawLobbyData = {
+			lobbyId,
+			lobbyName,
+			ownerName,
+			ownerId,
+			scenarioName,
+			scenarioId,
+			maxPlayers,
+			feature,
+			envIdx,
+			gameVersion,
+			briefingRoom,
+			hasPwd,
+			ld_GameState,
+			mUtc,
+			playerCount
+		};
+
+		this.queuedLobbyData.push(data);
+	}
+
+	@RPC("in")
+	RawLobbySyncDone(isPublicList: boolean) {
+		this.rawLobbyData.lastUpdatedList = isPublicList ? "public" : "private";
+		this.rawLobbyData.updatedAt = Date.now();
+		this.rawLobbyData[this.rawLobbyData.lastUpdatedList] = this.queuedLobbyData;
+		this.queuedLobbyData = [];
+	}
+
 	public closeLobby(lobby: VTOLLobby) {
 		Logger.info(`Closing lobby ${lobby.id}`);
 		RPCController.deregister(lobby);
@@ -329,6 +410,18 @@ class Application {
 		const game = this.getGame(lobbyId);
 		if (!game) return [];
 		return game.getResyncPackets();
+	}
+
+	@Callable
+	public assignLobbyReplayId(lobbyId: string, recordingId: string) {
+		const game = this.getGame(lobbyId);
+		if (!game) {
+			console.error(`Game ${lobbyId} not found for replay ID assignment`);
+			return;
+		}
+
+		// game.currentReplayId = recordingId;
+		game.setReplayId(recordingId);
 	}
 
 	@Callable

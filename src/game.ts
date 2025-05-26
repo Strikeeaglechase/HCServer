@@ -2,6 +2,7 @@ import { compressRpcPackets } from "common/compression/vtcompression.js";
 import { Logger } from "common/logger.js";
 import { EnableRPCs, RPC, RPCPacket } from "common/rpc.js";
 import { Player, RawPlayerInfo } from "common/shared.js";
+import fetch from "node-fetch";
 
 import { Application } from "./app.js";
 import { Client } from "./client.js";
@@ -23,9 +24,32 @@ interface ResyncPacketFilter {
 const resyncPacketFilter: ResyncPacketFilter[] = [
 	{ className: ["MessageHandler"], method: ["NetInstantiate", "NetDestroy", "SetEntityUnitID", "CreateJammer"] },
 	{ className: ["RadarJammerSync"], method: ["TDecoyModel", "TMode"] },
-	{ className: ["PlayerVehicle", "AIAirVehicle", "AIGroundUnit"], method: ["Die", "Spawn"] },
+	{ className: ["PlayerVehicle", "AIAirVehicle", "AIGroundUnit"], method: ["Die", "Spawn", "AttachEquip"] },
 	{ className: ["VTOLLobby"], method: ["LogMessage"] }
 ];
+
+// On NetDestroy, we remove any resync packets that are no longer needed
+function checkResyncShouldBeRemovedForDestroy(packet: RPCPacket, destroyId: string) {
+	switch (packet.className) {
+		case "MessageHandler":
+			if (packet.method == "NetInstantiate" && packet.args[0] == destroyId) return true;
+			if (packet.method == "SetEntityUnitID" && packet.args[0] == destroyId) return true;
+			break;
+
+		case "RadarJammerSync":
+		case "PlayerVehicle":
+		case "AIAirVehicle":
+		case "AIGroundUnit":
+			if (packet.id == destroyId) return true;
+			break;
+
+		default:
+			break;
+	}
+
+	return false;
+}
+
 // const LOBBY_INACTIVITY_TIMEOUT = 1000 * 60; // 1 minute
 const LOBBY_INACTIVITY_TIMEOUT = 1000 * 5; // 5 seconds
 
@@ -46,22 +70,28 @@ class VTOLLobby {
 	public maxPlayers: number;
 	public isConnected: boolean;
 	public isPrivate: boolean;
+	public hostId: string;
 	public players: Player[] = [];
 
 	public isHs = false;
 	private lastHealthCheckTime = Date.now();
+
+	private isHcAutoJoinable = false;
+	private hasCheckedValidAutoJoinHost = false;
 
 	private missionId: string;
 	private campaignId: string;
 	private workshopId: string;
 
 	private disconnectTimeStart: number = 0;
-	private continuousRecord = false;
+	public continuousRecord = false;
 	private continuousRecordPassword: string = undefined;
 	private contRecordJoinStartedAt = 0;
 
 	private pooledRpcs: RPCPacket[] = [];
 	private pooledVTLobbyPackets: RPCPacket[] = [];
+
+	private currentReplayId: string;
 
 	constructor(id: string, private app: Application) {
 		this.id = id;
@@ -77,7 +107,8 @@ class VTOLLobby {
 		isConnected: boolean,
 		players: RawPlayerInfo[],
 		hostId: string,
-		hostName: string
+		hostName: string,
+		isHcJoinable: boolean
 	) {
 		this.name = name;
 		this.missionName = missionName;
@@ -86,6 +117,8 @@ class VTOLLobby {
 		this.players = players.map(p => new Player(p));
 		this.isConnected = isConnected;
 		this.isPrivate = isPrivate;
+		this.isHcAutoJoinable = isHcJoinable;
+		this.hostId = hostId;
 
 		// Logger.info(`Lobby data update for ${this.id}: ${this.name} (${this.missionName}) ${this.playerCount}/${this.maxPlayers} ${this.isPrivate ? "private" : "public"} ${this.isConnected ? "connected" : "1`ed"}`);
 
@@ -97,12 +130,34 @@ class VTOLLobby {
 		if (this.name.includes("24/7 BVR") && this.playerCount > 1) {
 			this.isHs = true;
 			if (process.env.IS_DEV != "true") this.continuousRecord = true;
+			// this.continuousRecord = true;
 		}
 
-		if (this.workshopId == "3104789609") {
+		if (this.isHcAutoJoinable && !this.hasCheckedValidAutoJoinHost && process.env.IS_DEV != "true") {
+			this.checkAutoJoinHost();
+		}
+
+		if (this.workshopId == "3104789609" && process.env.IS_DEV != "true") {
 			this.continuousRecord = true;
 			this.continuousRecordPassword = "1776";
 			// Logger.warn(`Lobby ${this} is a continuous record lobby due to workshop ID`);
+		}
+	}
+
+	private async checkAutoJoinHost() {
+		this.hasCheckedValidAutoJoinHost = true;
+		const req = await fetch(`http://book.caw8.net/user/${this.hostId}`);
+		if (req.status != 200) {
+			Logger.warn(`Failed to check auto join host for ${this.name} (${this.id}), status: ${req.status}`);
+			return;
+		}
+
+		const data = (await req.json()) as { user: { discordId: string; steamId: string }; isAuthed: boolean };
+		if (data.isAuthed) {
+			this.continuousRecord = true;
+			Logger.info(`Lobby ${this} is a continuous record lobby due to auto join host`);
+		} else {
+			Logger.info(`Lobby ${this} is hosted by non-authenticated user ${this.hostId}`);
 		}
 	}
 
@@ -147,7 +202,7 @@ class VTOLLobby {
 
 	@RPC("in")
 	ConnectionResult(result: boolean, reason: string) {
-		console.log(`Connection result for ${this.name} (${this.id}): ${result ? "Success" : "Failure"}: ${reason}`);
+		Logger.info(`Connection result for ${this.name} (${this.id}): ${result ? "Success" : "Failure"}: ${reason}`);
 		if (this.continuousRecord && !result) {
 			this.contRecordJoinStartedAt = 0;
 		}
@@ -238,7 +293,22 @@ class VTOLLobby {
 		const isResyncPacket = resyncPacketFilter.some(
 			filter => compareStrOrArr(packet.className, filter.className) && compareStrOrArr(packet.method, filter.method)
 		);
-		if (isResyncPacket) this.resyncPackets.push(packet);
+		if (isResyncPacket) {
+			if (packet.className == "MessageHandler" && packet.method == "NetDestroy") {
+				// const initLength = this.resyncPackets.length;
+				this.resyncPackets = this.resyncPackets.filter(p => !checkResyncShouldBeRemovedForDestroy(p, packet.args[0]));
+				// Logger.info(`Removed ${initLength - this.resyncPackets.length} resync packets for destroy ${packet.args[0]}`);
+			} else {
+				this.resyncPackets.push(packet);
+			}
+		}
+	}
+
+	public setReplayId(id: string) {
+		this.currentReplayId = id;
+		Logger.info(`Got replay ID for ${this}: ${id}`);
+
+		this.app.hcManager.setLobbyReplayId(this.id, this.currentReplayId);
 	}
 
 	public disconnect() {

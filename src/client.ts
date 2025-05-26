@@ -1,19 +1,28 @@
 import { Logger } from "common/logger.js";
-import { EnableRPCs, RPC, RPCController } from "common/rpc.js";
-import { DbUserEntry, HCUser, Packet, PacketType, RecordedLobbyInfo, UserScopes, VTGRHeader } from "common/shared.js";
+import { EnableRPCs, RPC, RPCController, RPCPacket } from "common/rpc.js";
+import { AuthType, DbUserEntry, HCUser, Packet, PacketType, RecordedLobbyInfo, UserScopes, VTGRHeader } from "common/shared.js";
 import { AuthService } from "serviceLib/serviceDefs/AuthService.js";
 import { DBService } from "serviceLib/serviceDefs/DBService.js";
 import { v4 as uuidv4 } from "uuid";
 import { WebSocket } from "ws";
 
 import { Application } from "./app.js";
+import { HCCommands } from "./hcManager.js";
 
 const REPLAY_HEADER = Buffer.from("REPLAY", "ascii");
 // const REPLAY_FOOTER = Buffer.from("\0\0\0END", "ascii");
 
+enum AIPClientPacketType {
+	RPC,
+	CommandPacket
+}
+
+type AIPClientPacket = { type: AIPClientPacketType.RPC; packet: RPCPacket } | { type: AIPClientPacketType.CommandPacket; packet: HCCommands.Packet };
+
 @EnableRPCs("instance")
 class Client {
 	public isHeadlessClient = false;
+	public isAIPClient = false;
 	public id = uuidv4();
 	public keepAliveInterval: NodeJS.Timeout;
 	public loggedInAs: HCUser;
@@ -32,18 +41,41 @@ class Client {
 		this.socket.on("message", data => {
 			if (data.toString() == process.env.HC_PASSWORD) {
 				app.assignHeadlessSocket(this);
-			} else {
-				if (this.isHeadlessClient) {
-					const message = data.toString();
-					message
-						.split("\n")
-						.filter(m => m.length > 2)
-						.forEach(m => {
-							app.handleVtolMessage(m, this);
-						});
-				} else {
-					RPCController.handlePacket(data.toString(), this);
+				return;
+			}
+
+			if (data.toString() == "autosub") {
+				this.handleAutoSub();
+				return;
+			}
+
+			if (this.isHeadlessClient) {
+				const message = data.toString();
+				message
+					.split("\n")
+					.filter(m => m.length > 2)
+					.forEach(m => {
+						app.handleVtolMessage(m, this);
+					});
+			} else if (this.isAIPClient) {
+				const message: AIPClientPacket = JSON.parse(data.toString());
+				switch (message.type) {
+					case AIPClientPacketType.RPC:
+						RPCController.handlePacket(message.packet, this);
+						break;
+					case AIPClientPacketType.CommandPacket:
+						const hcClient = app.headlessClients[0];
+						if (!hcClient) {
+							Logger.warn(`AIPClient ${this} sent a command packet but no HCClient found`);
+							return;
+						}
+
+						message.packet.lobbyId = this.subscribedGameId;
+						hcClient.send(message.packet);
+						break;
 				}
+			} else {
+				RPCController.handlePacket(data.toString(), this);
 			}
 		});
 
@@ -55,6 +87,28 @@ class Client {
 				clearInterval(this.keepAliveInterval);
 			}
 		}, 1000);
+	}
+
+	private handleAutoSub() {
+		this.isAIPClient = true;
+		this.loggedInAs = {
+			username: "AI Pilot Client",
+			id: `auto_${this.id}`,
+			pfpUrl: "",
+			scopes: [UserScopes.ALPHA_ACCESS, UserScopes.DONOR],
+			authType: AuthType.BYPASS
+		};
+		Logger.info(`Client ${this} auto-subscribed`);
+
+		const hs = this.app.games.find(g => g.isHs);
+		// const hs = this.app.games.find(g => g.hostId == "76561199475382879");
+		if (!hs) {
+			Logger.error(`No HS lobby found to auto-subscribe to`);
+			return;
+		}
+		hs.continuousRecord = true;
+
+		this.subscribe(hs.id);
 	}
 
 	public hasScope(scope: UserScopes | UserScopes[]) {
@@ -137,7 +191,7 @@ class Client {
 		lowerDateBound: number,
 		upperDateBound: number
 	) {
-		Logger.info(`Requesting replay lobbies with query ${id}, name: ${lobbyNameQuery}, player: ${playerNameQuery}, host: ${hostNameQuery}`);
+		Logger.info(`Requesting replay lobbies with query id: ${id}, name: ${lobbyNameQuery}, player: ${playerNameQuery}, host: ${hostNameQuery}`);
 		const lobbies = DBService.getRecordedLobbiesStream(id, lobbyNameQuery, playerNameQuery, hostNameQuery, lowerDateBound, upperDateBound);
 
 		let hasCanceled = false;
@@ -256,7 +310,7 @@ class Client {
 		console.log(`Client ${this} unsubscribed from live lobby list`);
 	}
 
-	public send<T extends Packet | ArrayLike<number> | string>(packet: T): void {
+	public send<T extends Packet | ArrayLike<number> | string | HCCommands.Packet>(packet: T): void {
 		if (packet instanceof Uint8Array) {
 			this.socket.send(packet);
 		} else if (typeof packet == "string") {
