@@ -191,7 +191,7 @@ class Client {
 		lowerDateBound: number,
 		upperDateBound: number
 	) {
-		Logger.info(`Requesting replay lobbies with query ${id}, name: ${lobbyNameQuery}, player: ${playerNameQuery}, host: ${hostNameQuery}`);
+		Logger.info(`Requesting replay lobbies with query id: ${id}, name: ${lobbyNameQuery}, player: ${playerNameQuery}, host: ${hostNameQuery}`);
 		const lobbies = DBService.getRecordedLobbiesStream(id, lobbyNameQuery, playerNameQuery, hostNameQuery, lowerDateBound, upperDateBound);
 
 		let hasCanceled = false;

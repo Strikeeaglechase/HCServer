@@ -306,7 +306,7 @@ class VTOLLobby {
 
 	public setReplayId(id: string) {
 		this.currentReplayId = id;
-		console.log(`Got replay ID for ${this}: ${id}`);
+		Logger.info(`Got replay ID for ${this}: ${id}`);
 
 		this.app.hcManager.setLobbyReplayId(this.id, this.currentReplayId);
 	}
