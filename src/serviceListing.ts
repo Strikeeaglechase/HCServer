@@ -14,6 +14,8 @@ const awsEnv = [`AWS_KEY=${secrets.aws.accessKey}`, `AWS_SECRET=${secrets.aws.se
 const dbName = "headless-client" + (secrets.isDev ? "-dev" : "");
 const logIgnoreConfig = [{ serviceIdentifier: "Application", methodName: "lobbyData" }];
 
+const steamCmdPath = secrets.isDev ? "../steamcmd/steamcmd.exe" : "";
+
 export const isDev: boolean = secrets.isDev;
 export const useHttpServer: boolean = secrets.isDev;
 
@@ -32,7 +34,13 @@ export default function (): ServiceDefinition[] {
 		{
 			name: "Workshop",
 			path: "../../HCServices/workshopService/dist/index.js",
-			envs: [...connectorEnv, `API_PORT=${secrets.ports.workshop}`, `STEAM_USER=${secrets.steam.username}`, `STEAM_PASS=${secrets.steam.password}`],
+			envs: [
+				...connectorEnv,
+				`API_PORT=${secrets.ports.workshop}`,
+				`STEAM_USER=${secrets.steam.username}`,
+				`STEAM_PASS=${secrets.steam.password}`,
+				`STEAM_CMD_PATH=${steamCmdPath}`
+			],
 			gateway: { url: "/api/workshop", port: secrets.ports.workshop }
 		},
 		{
