@@ -14,6 +14,9 @@ const awsEnv = [`AWS_KEY=${secrets.aws.accessKey}`, `AWS_SECRET=${secrets.aws.se
 const dbName = "headless-client" + (secrets.isDev ? "-dev" : "");
 const logIgnoreConfig = [{ serviceIdentifier: "Application", methodName: "lobbyData" }];
 
+// const steamCmdPath = secrets.isDev ? "../steamcmd/steamcmd.exe" : "";
+const steamCmdPath = "";
+
 export const isDev: boolean = secrets.isDev;
 export const useHttpServer: boolean = secrets.isDev;
 
@@ -71,12 +74,12 @@ export default function (): ServiceDefinition[] {
 			path: "../../HCServices/storageService/dist/index.js",
 			envs: [...connectorEnv, ...awsEnv, `API_PORT=${secrets.ports.storage}`, `DATA_PATH=../store/`],
 			gateway: { url: "/api/storage", port: secrets.ports.storage }
-		},
-		{
-			name: "LandingRater",
-			path: "../../HCServices/carrierLandingRater/dist/index.js",
-			envs: [...connectorEnv, `API_PORT=${secrets.ports.landingRater}`],
-			gateway: { url: "/api/lrs", port: secrets.ports.landingRater }
 		}
+		// {
+		// 	name: "LandingRater",
+		// 	path: "../../HCServices/carrierLandingRater/dist/index.js",
+		// 	envs: [...connectorEnv, `API_PORT=${secrets.ports.landingRater}`],
+		// 	gateway: { url: "/api/lrs", port: secrets.ports.landingRater }
+		// }
 	];
 }
