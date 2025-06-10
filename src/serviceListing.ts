@@ -35,7 +35,13 @@ export default function (): ServiceDefinition[] {
 		{
 			name: "Workshop",
 			path: "../../HCServices/workshopService/dist/index.js",
-			envs: [...connectorEnv, `API_PORT=${secrets.ports.workshop}`, `STEAM_USER=${secrets.steam.username}`, `STEAM_PASS=${secrets.steam.password}`],
+			envs: [
+				...connectorEnv,
+				`API_PORT=${secrets.ports.workshop}`,
+				`STEAM_USER=${secrets.steam.username}`,
+				`STEAM_PASS=${secrets.steam.password}`,
+				`STEAM_CMD_PATH=${steamCmdPath}`
+			],
 			gateway: { url: "/api/workshop", port: secrets.ports.workshop }
 		},
 		{

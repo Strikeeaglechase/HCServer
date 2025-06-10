@@ -322,6 +322,7 @@ class Application {
 			mUtc,
 			playerCount
 		};
+		// console.log(data);
 
 		this.queuedLobbyData.push(data);
 	}
