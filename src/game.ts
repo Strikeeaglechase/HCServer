@@ -85,7 +85,7 @@ class VTOLLobby {
 
 	private disconnectTimeStart: number = 0;
 	public continuousRecord = false;
-	private continuousRecordPassword: string = undefined;
+	public continuousRecordPassword: string = undefined;
 	private contRecordJoinStartedAt = 0;
 
 	private pooledRpcs: RPCPacket[] = [];

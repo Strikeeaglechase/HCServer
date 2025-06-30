@@ -354,7 +354,12 @@ class Application {
 			case IPCTypes.rpcPacket: {
 				// Packets with gameIds should be transmitted to only clients in that game
 				if (packet.gameId) {
-					this.getGame(packet.gameId)?.handleRPC(packet);
+					const game = this.getGame(packet.gameId);
+					if (game) {
+						game.handleRPC(packet);
+					} else {
+						Logger.error(`Game with ID ${packet.gameId} not found for RPC packet ${JSON.stringify(packet)}`);
+					}
 				} else {
 					if (packet.className == "Application" && packet.method == "CreateLobby") {
 						this.createLobbyRPCs.push(packet);
