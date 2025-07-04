@@ -177,11 +177,11 @@ class Application {
 		const allowed = clientAllowedRPCs.find(r => r.className == packet.className && r.method == packet.method);
 		// console.log(allowed);
 
-		if ((packet.className == "Client" && packet.method == "subscribe") || (packet.className == "Application" && packet.method == "requestJoinLobby")) {
-			// Auto-allow subscribe if 24/7 BVR
-			const game = this.getGame(packet.args[0]);
-			if (game && game.isHs) return true;
-		}
+		// if ((packet.className == "Client" && packet.method == "subscribe") || (packet.className == "Application" && packet.method == "requestJoinLobby")) {
+		// Auto-allow subscribe if 24/7 BVR
+		// const game = this.getGame(packet.args[0]);
+		// if (game && game.isHs) return true;
+		// }
 
 		if (allowed && allowed.permission == null) return true;
 		if (!allowed) return false;
