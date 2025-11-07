@@ -209,6 +209,7 @@ class Client {
 		lobbies.on("data", (lobby: string) => {
 			if (hasCanceled) return;
 			const lobbyObj = JSON.parse(lobby) as VTGRHeader;
+			console.log(`Sending replay lobby info for ${lobbyObj.info.lobbyName} (${lobbyObj.id})`);
 			this.replayLobbyInfo(lobbyObj.info);
 		});
 	}
