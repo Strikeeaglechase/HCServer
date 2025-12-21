@@ -177,11 +177,11 @@ class Application {
 		const allowed = clientAllowedRPCs.find(r => r.className == packet.className && r.method == packet.method);
 		// console.log(allowed);
 
-		if ((packet.className == "Client" && packet.method == "subscribe") || (packet.className == "Application" && packet.method == "requestJoinLobby")) {
-			// Auto-allow subscribe if 24/7 BVR
-			const game = this.getGame(packet.args[0]);
-			if (game && game.isHs) return true;
-		}
+		// if ((packet.className == "Client" && packet.method == "subscribe") || (packet.className == "Application" && packet.method == "requestJoinLobby")) {
+		// Auto-allow subscribe if 24/7 BVR
+		// const game = this.getGame(packet.args[0]);
+		// if (game && game.isHs) return true;
+		// }
 
 		if (allowed && allowed.permission == null) return true;
 		if (!allowed) return false;
@@ -354,7 +354,12 @@ class Application {
 			case IPCTypes.rpcPacket: {
 				// Packets with gameIds should be transmitted to only clients in that game
 				if (packet.gameId) {
-					this.getGame(packet.gameId)?.handleRPC(packet);
+					const game = this.getGame(packet.gameId);
+					if (game) {
+						game.handleRPC(packet);
+					} else {
+						Logger.error(`Game with ID ${packet.gameId} not found for RPC packet ${JSON.stringify(packet)}`);
+					}
 				} else {
 					if (packet.className == "Application" && packet.method == "CreateLobby") {
 						this.createLobbyRPCs.push(packet);

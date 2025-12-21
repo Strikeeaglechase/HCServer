@@ -70,6 +70,11 @@ class Client {
 							return;
 						}
 
+						// console.log(message);
+						// if (!this.subscribedGameId) {
+						// 	Logger.error(`No subscribed game ID for AIPClient ${this}. Cannot send command packet.`);
+						// }
+
 						message.packet.lobbyId = this.subscribedGameId;
 						hcClient.send(message.packet);
 						break;
@@ -101,12 +106,13 @@ class Client {
 		Logger.info(`Client ${this} auto-subscribed`);
 
 		const hs = this.app.games.find(g => g.isHs);
-		// const hs = this.app.games.find(g => g.hostId == "76561199475382879");
+		// const hs = this.app.games.find(g => g.hostId == "76561198241105316");
 		if (!hs) {
 			Logger.error(`No HS lobby found to auto-subscribe to`);
 			return;
 		}
 		hs.continuousRecord = true;
+		hs.continuousRecordPassword = "shark";
 
 		this.subscribe(hs.id);
 	}
@@ -203,6 +209,7 @@ class Client {
 		lobbies.on("data", (lobby: string) => {
 			if (hasCanceled) return;
 			const lobbyObj = JSON.parse(lobby) as VTGRHeader;
+			console.log(`Sending replay lobby info for ${lobbyObj.info.lobbyName} (${lobbyObj.id})`);
 			this.replayLobbyInfo(lobbyObj.info);
 		});
 	}

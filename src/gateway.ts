@@ -38,6 +38,10 @@ class Gateway {
 			res.send(Application.instance.rawLobbyData);
 		});
 
+		// this.api.get("/api/temp", (req, res) => {
+		// 	res.sendFile(path.resolve("../../utils/hsMissileData.json"));
+		// });
+
 		this.api.get("/*", (req, res) => {
 			res.sendFile(path.resolve("../../VTOLLiveViewerClient/public/index.html"));
 		});
