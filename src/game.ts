@@ -211,6 +211,9 @@ class VTOLLobby {
 	@RPC("out")
 	isRecording(isRecording: boolean) {}
 
+	@RPC("in")
+	RadarDataReport() {}
+
 	public syncIsRecording() {
 		this.isRecording(this.continuousRecord);
 	}
