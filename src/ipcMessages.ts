@@ -9,6 +9,7 @@ interface IPCRPCPacket {
 	id?: string;
 	gameId?: string;
 	type: IPCTypes.rpcPacket;
+	orgTimestamp: number;
 }
 
 type IPCPacket = IPCRPCPacket;
