@@ -252,6 +252,7 @@ class VTOLLobby {
 		this.continuousRecord = true;
 		if (password) this.continuousRecordPassword = password;
 
+		Logger.info(`Recording enabled for ${this}`);
 		this.syncIsRecording();
 	}
 
