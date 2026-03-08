@@ -32,7 +32,10 @@ class Client {
 
 	private requestReplaysCancelationCallback: () => void;
 
-	constructor(private socket: WebSocket, private app: Application) {
+	constructor(
+		private socket: WebSocket,
+		private app: Application
+	) {
 		this.send({
 			id: this.id,
 			type: PacketType.assignId
@@ -181,6 +184,15 @@ class Client {
 			// if (this.hasScope(UserScopes.ALPHA_ACCESS)) this.sendSync();
 		}
 	}
+
+	@RPC("in")
+	async requestAutoJoinTokenFor(steamId: string) {
+		const token = await AuthService.createAutoJoinToken(steamId);
+		this.autoJoinTokenFor(steamId, token);
+	}
+
+	@RPC("out")
+	autoJoinTokenFor(steamId: string, token: string) {}
 
 	@RPC("out")
 	ping(n: number) {}

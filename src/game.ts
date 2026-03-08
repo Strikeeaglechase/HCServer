@@ -3,6 +3,7 @@ import { Logger } from "common/logger.js";
 import { EnableRPCs, RPC, RPCPacket } from "common/rpc.js";
 import { Player, RawPlayerInfo } from "common/shared.js";
 import fetch from "node-fetch";
+import { AuthService } from "serviceLib/serviceDefs/AuthService.js";
 
 import { Application } from "./app.js";
 import { Client } from "./client.js";
@@ -78,6 +79,7 @@ class VTOLLobby {
 
 	private isHcAutoJoinable = false;
 	private hasCheckedValidAutoJoinHost = false;
+	private hcAutoJoinKey: string;
 
 	private missionId: string;
 	private campaignId: string;
@@ -93,7 +95,10 @@ class VTOLLobby {
 
 	private currentReplayId: string;
 
-	constructor(id: string, private app: Application) {
+	constructor(
+		id: string,
+		private app: Application
+	) {
 		this.id = id;
 	}
 
@@ -108,7 +113,8 @@ class VTOLLobby {
 		players: RawPlayerInfo[],
 		hostId: string,
 		hostName: string,
-		isHcJoinable: boolean
+		isHcJoinable: boolean,
+		hcAutoJoinKey: string
 	) {
 		this.name = name;
 		this.missionName = missionName;
@@ -127,10 +133,8 @@ class VTOLLobby {
 		this.prevConnectStatus = this.isConnected;
 
 		// Yea this code aint great
-		if (this.name.includes("24/7 BVR") && this.playerCount > 1) {
-			this.isHs = true;
-			if (process.env.IS_DEV != "true") this.continuousRecord = true;
-			// this.continuousRecord = true;
+		if (hcAutoJoinKey && this.playerCount > 1) {
+			this.handleAutoJoinKey(hcAutoJoinKey);
 		}
 
 		if (this.isHcAutoJoinable && !this.hasCheckedValidAutoJoinHost && process.env.IS_DEV != "true") {
@@ -142,6 +146,26 @@ class VTOLLobby {
 			this.continuousRecordPassword = "1776";
 			// Logger.warn(`Lobby ${this} is a continuous record lobby due to workshop ID`);
 		}
+	}
+
+	private async handleAutoJoinKey(key: string) {
+		if (key == this.hcAutoJoinKey) return;
+		this.hcAutoJoinKey = key;
+
+		const autoJoinToken = await AuthService.readAutoJoinToken(key);
+		if (!autoJoinToken) {
+			Logger.warn(`Invalid auto join key for lobby ${this.name} (${this.id})`);
+			return;
+		}
+
+		if (autoJoinToken.steamId != this.hostId) {
+			Logger.warn(`Auto join key for ${autoJoinToken.steamId} was attempted on lobby ${this.name} (${this.id}), with host ${this.hostId}. Does not match!`);
+			return;
+		}
+
+		console.log(`Lobby ${this.name} (${this.id}) has a valid auto join key for host ${this.hostId}. Enabling continuous record`);
+		this.isHs = true;
+		if (process.env.IS_DEV != "true") this.continuousRecord = true;
 	}
 
 	private async checkAutoJoinHost() {
