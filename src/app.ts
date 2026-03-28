@@ -27,7 +27,7 @@ const clientAllowedRPCs: { className: string; method: string; permission: UserSc
 	{ className: "Client", method: "adminSearchUsers", permission: UserScopes.ADMIN },
 	{ className: "Client", method: "adminSetUserScopes", permission: UserScopes.ADMIN },
 	{ className: "Client", method: "kickUser", permission: UserScopes.ADMIN },
-	{ className: "Client", method: "createAutoJoinToken", permission: UserScopes.ADMIN }
+	{ className: "Client", method: "requestAutoJoinTokenFor", permission: UserScopes.ADMIN }
 ];
 
 const tps = 60;
