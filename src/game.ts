@@ -159,7 +159,9 @@ class VTOLLobby {
 		}
 
 		if (autoJoinToken.steamId != this.hostId) {
-			Logger.warn(`Auto join key for ${autoJoinToken.steamId} was attempted on lobby ${this.name} (${this.id}), with host ${this.hostId}. Does not match!`);
+			Logger.warn(
+				`Auto join key for steamId "${autoJoinToken.steamId}" was attempted on lobby ${this.name} (${this.id}), with host id "${this.hostId}". Does not match!`
+			);
 			return;
 		}
 
